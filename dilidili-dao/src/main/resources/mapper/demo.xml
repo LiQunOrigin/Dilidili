@@ -5,7 +5,7 @@
 <mapper namespace="com.liqun.dilidili.dao.DemoDao">
     <!--sql语句代码-->
     <select id="query" parameterType="java.lang.Long" resultType="java.lang.Long">
-        select id from t_demo where id = #{id}
+        select id+1 from t_demo where id = #{id}
     </select>
 
 </mapper>

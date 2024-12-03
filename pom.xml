@@ -36,6 +36,14 @@
             <version>2.2.0</version>
         </dependency>
 
+        <!--热部署坐标-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+
     </dependencies>
     <modules>
         <module>dilidili-api</module>
