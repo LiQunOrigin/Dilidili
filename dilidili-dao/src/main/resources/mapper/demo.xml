@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--命名空间：找到所在的mapper接口的位置-->
+<mapper namespace="com.liqun.dilidili.dao.DemoDao">
+    <!--sql语句代码-->
+    <select id="query" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select id from t_demo where id = #{id}
+    </select>
+
+</mapper>
+
