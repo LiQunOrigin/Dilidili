@@ -18,5 +18,15 @@
         from t_user
         where phone = #{phone}
     </select>
+    <select id="getUserById" parameterType="long" resultType="com.liqun.dilidili.domain.User">
+        select *
+        from t_user
+        where id = #{id}
+    </select>
+    <select id="getUserInfoByUserId" resultType="com.liqun.dilidili.domain.UserInfo">
+        select *
+        from t_user_info
+        where userId = #{userId}
+    </select>
 </mapper>
 

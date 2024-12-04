@@ -1,6 +1,7 @@
 package com.liqun.dilidili.api;
 
 
+import com.liqun.dilidili.api.support.UserSupport;
 import com.liqun.dilidili.domain.JsonResponse;
 import com.liqun.dilidili.domain.User;
 import com.liqun.dilidili.service.UserService;
@@ -22,6 +23,16 @@ public class UserApi {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserSupport userSupport;
+
+    @GetMapping("/users")
+    public JsonResponse<User> getUserInfo() {
+        Long userId = userSupport.getCurrentUserId();
+        User user = userService.getUserInfo(userId);
+        return new JsonResponse<>(user);
+    }
+
     @GetMapping("/rsa-pks")
     public JsonResponse<String> getRsaPublicKey() {
         String pk = RSAUtil.getPublicKeyStr();
@@ -35,7 +46,7 @@ public class UserApi {
     }
 
     @PostMapping("/user-tokens")
-    public JsonResponse<String> login(@RequestBody User user) {
+    public JsonResponse<String> login(@RequestBody User user) throws Exception {
         String token = userService.login(user);
         return new JsonResponse<>(token);
     }
