@@ -50,4 +50,12 @@ public class UserApi {
         String token = userService.login(user);
         return new JsonResponse<>(token);
     }
+
+    @PutMapping("/users")
+    public JsonResponse<String> updateUsers(@RequestBody User user) throws Exception {
+        Long userId = userSupport.getCurrentUserId();
+        user.setId(userId);
+        userService.updateUsers(user);
+        return JsonResponse.success();
+    }
 }

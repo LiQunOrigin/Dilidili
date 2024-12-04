@@ -11,6 +11,21 @@
         insert into t_user_info(userId, nick, avatar, sign, gender, birth, createTime)
         values (#{userId}, #{nick}, #{avatar}, #{sign}, #{gender}, #{birth}, #{createTime})
     </insert>
+    <update id="updateUsers" parameterType="com.liqun.dilidili.domain.User">
+        update t_user
+        set
+        <if test="phone!=null and phone!='' ">
+            phone=#{phone},
+        </if>
+        <if test="email!=null and email!='' ">
+            email=#{email},
+        </if>
+        <if test="password!=null and password!='' ">
+            password=#{password},
+        </if>
+        updateTime = #{updateTime}
+        where id = #{id}
+    </update>
 
 
     <select id="getUserByPhone" parameterType="string" resultType="com.liqun.dilidili.domain.User">
@@ -27,6 +42,13 @@
         select *
         from t_user_info
         where userId = #{userId}
+    </select>
+    <select id="getUserByPhoneOrEmail" parameterType="string" resultType="com.liqun.dilidili.domain.User">
+        select *
+        from
+            ( select concat(phone,ifnull(email, '')) as pe, u.* from t_user u ) tmp
+        where
+            tmp.pe like '%${phoneOrEmail}%'
     </select>
 </mapper>
 
