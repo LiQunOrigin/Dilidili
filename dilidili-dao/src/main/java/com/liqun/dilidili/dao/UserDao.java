@@ -28,4 +28,6 @@ public interface UserDao {
     Integer updateUsers(User user);
 
     User getUserByPhoneOrEmail(String phone);
+
+    Integer updateUserInfos(UserInfo userInfo);
 }

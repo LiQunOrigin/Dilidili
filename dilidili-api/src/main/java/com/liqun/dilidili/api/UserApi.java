@@ -4,6 +4,7 @@ package com.liqun.dilidili.api;
 import com.liqun.dilidili.api.support.UserSupport;
 import com.liqun.dilidili.domain.JsonResponse;
 import com.liqun.dilidili.domain.User;
+import com.liqun.dilidili.domain.UserInfo;
 import com.liqun.dilidili.service.UserService;
 import com.liqun.dilidili.service.utils.RSAUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,14 @@ public class UserApi {
         Long userId = userSupport.getCurrentUserId();
         user.setId(userId);
         userService.updateUsers(user);
+        return JsonResponse.success();
+    }
+
+    @PutMapping("/user-infos")
+    public JsonResponse<String> updateUserInfos(@RequestBody UserInfo userInfo){
+        Long userId = userSupport.getCurrentUserId();
+        userInfo.setUserId(userId);
+        userService.updateUserInfos(userInfo);
         return JsonResponse.success();
     }
 }
