@@ -1,6 +1,8 @@
 package com.liqun.dilidili.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.liqun.dilidili.dao.UserDao;
+import com.liqun.dilidili.domain.PageResult;
 import com.liqun.dilidili.domain.User;
 import com.liqun.dilidili.domain.UserInfo;
 import com.liqun.dilidili.domain.constant.UserConstant;
@@ -12,8 +14,8 @@ import com.mysql.cj.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
+import java.awt.event.PaintEvent;
+import java.util.*;
 import java.util.stream.BaseStream;
 
 /**
@@ -119,5 +121,26 @@ public class UserService {
     public void updateUserInfos(UserInfo userInfo) {
         userInfo.setUpdateTime(new Date());
         userDao.updateUserInfos(userInfo);
+    }
+
+    public User getUserById(Long followingId) {
+        return userDao.getUserById(followingId);
+    }
+
+    public List<UserInfo> getUserInfoByUserIds(Set<Long> userIdList) {
+        return userDao.getUserInfoByUserIds(userIdList);
+    }
+
+    public PageResult<UserInfo> pageListUserInfos(JSONObject params) {
+        Integer no = params.getInteger("no");
+        Integer size = params.getInteger("size");
+        params.put("start",(no-1)*size);
+        params.put("limit",size);
+        Integer total = userDao.pageCountUserInfos(params);
+        List<UserInfo> list = new ArrayList<>();
+        if(total > 0){
+            list = userDao.pageListUserInfos(params);
+        }
+        return new PageResult<>(total,list);
     }
 }

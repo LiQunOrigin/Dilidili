@@ -1,8 +1,13 @@
 package com.liqun.dilidili.dao;
 
+import com.alibaba.fastjson.JSONObject;
 import com.liqun.dilidili.domain.User;
 import com.liqun.dilidili.domain.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @version 1.0
@@ -30,4 +35,10 @@ public interface UserDao {
     User getUserByPhoneOrEmail(String phone);
 
     Integer updateUserInfos(UserInfo userInfo);
+
+    List<UserInfo> getUserInfoByUserIds(Set<Long> userIdList);
+
+    Integer pageCountUserInfos(Map<String,Object> params);
+
+    List<UserInfo> pageListUserInfos(JSONObject params);
 }

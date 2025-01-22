@@ -1,14 +1,20 @@
 package com.liqun.dilidili.api;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.liqun.dilidili.api.support.UserSupport;
 import com.liqun.dilidili.domain.JsonResponse;
+import com.liqun.dilidili.domain.PageResult;
 import com.liqun.dilidili.domain.User;
 import com.liqun.dilidili.domain.UserInfo;
+import com.liqun.dilidili.service.UserFollowingService;
 import com.liqun.dilidili.service.UserService;
 import com.liqun.dilidili.service.utils.RSAUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @version 1.0
@@ -26,6 +32,8 @@ public class UserApi {
 
     @Autowired
     private UserSupport userSupport;
+    @Autowired
+    private UserFollowingService userFollowingService;
 
     @GetMapping("/users")
     public JsonResponse<User> getUserInfo() {
@@ -67,4 +75,21 @@ public class UserApi {
         userService.updateUserInfos(userInfo);
         return JsonResponse.success();
     }
+
+    @GetMapping("/user-infos")
+    public JsonResponse<PageResult<UserInfo>> pageListUserInfos(@RequestParam Integer no,@RequestParam Integer size,String nick){
+        Long userId = userSupport.getCurrentUserId();
+        JSONObject params = new JSONObject();
+        params.put("no",no);
+        params.put("size",size);
+        params.put("nick",nick);
+        params.put("userId",userId);
+        PageResult<UserInfo> result = userService.pageListUserInfos(params);
+        if(result.getTotal()>0){
+            List<UserInfo> checkedUserInfoList = userFollowingService.checkFollowingStatus(result.getList(),userId);
+            result.setList(checkedUserInfoList);
+        }
+        return new JsonResponse<>(result);
+    }
+
 }

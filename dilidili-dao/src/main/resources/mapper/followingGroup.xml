@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--命名空间：找到所在的mapper接口的位置-->
+<mapper namespace="com.liqun.dilidili.dao.FollowingGroupDao">
+    <insert id="addFollowingGroup" parameterType="com.liqun.dilidili.domain.FollowingGroup" useGeneratedKeys="true" keyProperty="id">
+        insert into
+            t_following_group(
+                              userId, `name`, `type`, createTime
+        )values(
+                #{userId}
+                #{name}
+                #{type}
+                #{createTime}
+                       )
+    </insert>
+
+    <select id="getByType" parameterType="string" resultType="com.liqun.dilidili.domain.FollowingGroup">
+        select
+            *
+        from
+            t_following_group
+        where
+            `type` = #{type}
+    </select>
+
+    <select id="getById" parameterType="long" resultType="com.liqun.dilidili.domain.FollowingGroup">
+        select
+            *
+        from
+            t_following_group
+        where
+            id = #{id}
+    </select>
+    <select id="getByUserId" parameterType="long" resultType="com.liqun.dilidili.domain.FollowingGroup">
+        select
+            *
+        from t_following_group
+        where
+            userId = #{userId} or `type` in('0','1','2')
+    </select>
+    <select id="getUserFollowingGroups" parameterType="long" resultType="com.liqun.dilidili.domain.FollowingGroup">
+        select
+            *
+        from
+            t_following_group
+        where
+            userId = #{userId}
+    </select>
+</mapper>
+
