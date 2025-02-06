@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--命名空间：找到所在的mapper接口的位置-->
+<mapper namespace="com.liqun.dilidili.dao.UserMomentsDao">
+    <!--sql语句代码-->
+
+
+    <insert id="addUserMoments" parameterType="com.liqun.dilidili.domain.UserMoment" useGeneratedKeys="true" keyProperty="id">
+        insert into t_user_moments(userId,
+                                   `type`,
+                                   contentId,
+                                   createTime,
+                                   updateTime)
+        values (#{userId},
+                #{type},
+                #{contentId},
+                #{createTime},
+                #{updateTime})
+
+    </insert>
+</mapper>
+

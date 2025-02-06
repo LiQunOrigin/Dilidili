@@ -42,9 +42,10 @@ public class UserApi {
         return new JsonResponse<>(user);
     }
 
+
     @GetMapping("/rsa-pks")
     public JsonResponse<String> getRsaPublicKey() {
-        String pk = RSAUtil.getPublicKeyStr();
+        String pk = RSAUtil.getPublicKeyStr();//获取公钥
         return new JsonResponse<>(pk);
     }
 

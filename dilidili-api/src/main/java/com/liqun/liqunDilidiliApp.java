@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationContext;
  * @package: com.liqun
  * @className: liqunDilidiliApp
  * @author: LiQun
- * @description: TODO
+ * @description: 启动类
  * @data 2024/12/3 14:18
  */
 @SpringBootApplication
