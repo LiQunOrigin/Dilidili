@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--命名空间：找到所在的mapper接口的位置-->
+<mapper namespace="com.liqun.dilidili.dao.UserRoleDao">
+    <insert id="addUserRole" parameterType="com.liqun.dilidili.domain.auth.UserRole">
+        insert into
+            t_user_role
+            (
+             userId,
+             roleId,
+             createTime)
+        values
+            (
+             #{userId},
+             #{roleId},
+             #{createTime}
+            )
+    </insert>
+    <!--sql语句代码-->
+
+
+    <select id="getUserRoleByUserId" resultType="com.liqun.dilidili.domain.auth.UserRole">
+        select
+            ur.*,
+            ar.name roleName,
+            ar.code roleCode
+        from
+            t_user_role ur
+            left join t_auth_role ar on ur.userId = ar.id
+        where
+            userId = #{userId}
+    </select>
+</mapper>
+

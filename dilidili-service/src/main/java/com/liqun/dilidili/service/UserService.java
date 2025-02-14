@@ -5,6 +5,7 @@ import com.liqun.dilidili.dao.UserDao;
 import com.liqun.dilidili.domain.PageResult;
 import com.liqun.dilidili.domain.User;
 import com.liqun.dilidili.domain.UserInfo;
+import com.liqun.dilidili.domain.auth.UserAuthorities;
 import com.liqun.dilidili.domain.constant.UserConstant;
 import com.liqun.dilidili.domain.exception.ConditionException;
 import com.liqun.dilidili.service.utils.MD5Util;
@@ -31,6 +32,8 @@ import java.util.stream.BaseStream;
 public class UserService {
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private UserAuthService userAuthService;
 
     public void addUser(User user) {
         String phone = user.getPhone();
@@ -63,6 +66,8 @@ public class UserService {
         userInfo.setGender(UserConstant.GENDER_MALE);
         userInfo.setCreateTime(now);
         userDao.addUserInfo(userInfo);
+        //添加用户默认权限角色
+        userAuthService.addUserDefaultRole(user.getId());
     }
 
     public User getUserByPhone(String phone) {

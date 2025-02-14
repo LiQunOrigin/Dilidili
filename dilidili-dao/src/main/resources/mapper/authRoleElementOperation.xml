@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--命名空间：找到所在的mapper接口的位置-->
+<mapper namespace="com.liqun.dilidili.dao.AuthRoleElementOperationDao">
+    <resultMap id="AuthElementOperationResultMap" type="com.liqun.dilidili.domain.auth.AuthRoleElementOperation">
+        <id column="id" property="id"/><!--id表示主键，property表示实体类中的属性-->
+        <id column="roleId" property="roleId"/>
+        <id column="elementOperationId" property="elementOperationId"/>
+        <association property="authElementOperation" javaType="com.liqun.dilidili.domain.auth.AuthElementOperation">
+            <id column="elementName" property="elementName"/>
+            <id column="elementCode" property="elementCode"/>
+            <id column="operationType" property="operationType"/>
+        </association>
+    </resultMap>
+
+
+    <select id="getRoleElementOperationsByRoleIds"
+            parameterType="java.util.Set"
+            resultMap="AuthElementOperationResultMap">
+        select
+            areo.*,
+            aeo.elementName,
+            aeo.elementCode,
+            aeo.operationType
+        from
+            t_auth_role_element_operation areo
+            left join t_auth_element_operation aeo on areo.elementOperationId = aeo.id
+        where
+            areo.roleId in
+            <foreach collection="roleIdSet" item="roleId" open="(" separator="," close=")">
+                #{roleId}
+            </foreach>
+    </select>
+</mapper>
+

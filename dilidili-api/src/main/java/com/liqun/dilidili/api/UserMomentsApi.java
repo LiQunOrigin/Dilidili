@@ -3,6 +3,9 @@ package com.liqun.dilidili.api;
 import com.liqun.dilidili.api.support.UserSupport;
 import com.liqun.dilidili.domain.JsonResponse;
 import com.liqun.dilidili.domain.UserMoment;
+import com.liqun.dilidili.domain.annotation.ApiLimitedRole;
+import com.liqun.dilidili.domain.annotation.DataLimited;
+import com.liqun.dilidili.domain.constant.AuthRoleConstant;
 import com.liqun.dilidili.service.UserMomentsService;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -33,6 +36,8 @@ public class UserMomentsApi {
     private UserSupport userSupport;//用户支持类
 
     //用户发布动态接口
+    @ApiLimitedRole(limitedRoleCodeList = {AuthRoleConstant.ROLE_LV0})
+    @DataLimited
     @PostMapping("/user-moments")
     public JsonResponse<String> addUserMoments(@RequestBody UserMoment userMoment) throws MQBrokerException, RemotingException, InterruptedException, MQClientException {
         //获取当前登录用户id
@@ -45,7 +50,7 @@ public class UserMomentsApi {
     }
 
 
-    ///用户关注用户的动态接口
+    //用户关注用户的动态接口
     @GetMapping("user-subscribed-moments")
     public JsonResponse<List<UserMoment>> listUserSubscribedMoments() {
         Long userId = userSupport.getCurrentUserId();
