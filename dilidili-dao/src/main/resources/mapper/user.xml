@@ -11,6 +11,10 @@
         insert into t_user_info(userId, nick, avatar, sign, gender, birth, createTime)
         values (#{userId}, #{nick}, #{avatar}, #{sign}, #{gender}, #{birth}, #{createTime})
     </insert>
+    <insert id="addRefreshToken">
+        insert into t_refresh_token(userId, refreshToken, createTime)
+        values (#{userId}, #{refreshToken}, #{createTime})
+    </insert>
     <update id="updateUsers" parameterType="com.liqun.dilidili.domain.User">
         update t_user
         set
@@ -47,6 +51,11 @@
         updateTime = #{updateTime}
         where userId = #{userId}
     </update>
+    <delete id="deleteRefreshToken">
+        delete from t_refresh_token
+        where
+            refreshToken = #{refreshToken}
+    </delete>
 
 
     <select id="getUserByPhone" parameterType="string" resultType="com.liqun.dilidili.domain.User">
@@ -108,6 +117,12 @@
         </if>
         order by id desc
         limit #{start},#{limit}
+    </select>
+    <select id="getRefreshTokenDetail" parameterType="string" resultType="com.liqun.dilidili.domain.RefreshTokenDetail">
+        select *
+        from t_refresh_token
+        where
+            refreshToken = #{refreshToken}
     </select>
 </mapper>
 
