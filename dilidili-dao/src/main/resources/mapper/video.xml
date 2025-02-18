@@ -180,6 +180,12 @@
         </foreach>
         order by id desc
     </select>
+    <select id="getVideoDetails" resultType="com.liqun.dilidili.domain.Video">
+        select
+            *
+        from t_video
+        where id = #{id}
+    </select>
 
 
 </mapper>
