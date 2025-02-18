@@ -4,6 +4,7 @@ import com.liqun.dilidili.api.support.UserSupport;
 import com.liqun.dilidili.domain.JsonResponse;
 import com.liqun.dilidili.domain.PageResult;
 import com.liqun.dilidili.domain.Video;
+import com.liqun.dilidili.domain.VideoCollection;
 import com.liqun.dilidili.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -80,5 +81,36 @@ public class VideoApi {
         Map<String,Object> result = videoService.getVideoLikes(videoId,userId);
         return new JsonResponse<>(result);
     }
+
+    //收藏视频
+    @PostMapping("/videos-collections")
+    public JsonResponse<String> addVideoCollections(@RequestParam VideoCollection videoCollection){
+        Long userId = userSupport.getCurrentUserId();
+        videoService.addVideoCollections(videoCollection,userId);
+        return JsonResponse.success();
+    }
+
+    //取消收藏视频
+    @DeleteMapping("/videos-collections")
+    public JsonResponse<String> deleteVideoCollections(@RequestParam Long videoId){
+        Long userId = userSupport.getCurrentUserId();
+        videoService.deleteVideoCollections(videoId,userId);
+        return JsonResponse.success();
+    }
+
+    //获取视频收藏数
+    @GetMapping("/videos-collections")
+    public JsonResponse<Map<String,Object>> getVideoCollections(@RequestParam Long videoId){
+        Long userId = null;
+        try {
+            userId = userSupport.getCurrentUserId();
+        }catch (Exception ignored){
+            //未登录
+        }
+        Map<String,Object> result = videoService.getVideoCollections(videoId,userId);
+        return new JsonResponse<>(result);
+    }
+
+
 
 }

@@ -48,9 +48,25 @@
                 #{userId},
                 #{createTime})
     </insert>
+    <insert id="addVideoCollections">
+        insert into t_video_collection(videoId,
+                                       userId,
+                                       groupId,
+                                       createTime)
+        values (#{videoId},
+                #{userId},
+                #{groupId},
+                #{createTime})
+    </insert>
     <delete id="deleteVideoLikes">
         delete
         from t_video_like
+        where videoId = #{videoId}
+          and userId = #{userId}
+    </delete>
+    <delete id="deleteVideoCollections">
+        delete
+        from t_video_collection
         where videoId = #{videoId}
           and userId = #{userId}
     </delete>
@@ -85,6 +101,18 @@
         select count(1)
         from t_video_like
         where videoId = #{videoId}
+    </select>
+    <select id="getVideoCollections" resultType="long">
+        select count(1)
+        from t_video_collection
+        where videoId = #{videoId}
+          and userId = #{userId}
+    </select>
+    <select id="getVideoCollectionsByVideoIdAndUserId" resultType="com.liqun.dilidili.domain.VideoCollection">
+        select *
+        from t_video_collection
+        where videoId = #{videoId}
+          and userId = #{userId}
     </select>
 
 

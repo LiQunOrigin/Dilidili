@@ -1,10 +1,7 @@
 package com.liqun.dilidili.service;
 
 import com.liqun.dilidili.dao.VideoDao;
-import com.liqun.dilidili.domain.PageResult;
-import com.liqun.dilidili.domain.Video;
-import com.liqun.dilidili.domain.VideoLike;
-import com.liqun.dilidili.domain.VideoTag;
+import com.liqun.dilidili.domain.*;
 import com.liqun.dilidili.domain.exception.ConditionException;
 import com.liqun.dilidili.service.utils.FastDFSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +94,39 @@ public class VideoService {
         Map<String, Object> result = new HashMap<>();
         result.put("count", count);
         result.put("like", like);
+        return result;
+    }
+
+    @Transactional
+    public void addVideoCollections(VideoCollection videoCollection, Long userId) {
+        Long videoId = videoCollection.getVideoId();
+        Long groupId = videoCollection.getGroupId();
+        if(videoId == null || groupId == null) {
+            throw new ConditionException("参数异常");
+        }
+        Video video = videoDao.getVideoById(videoId);
+        if(video == null) {
+            throw new ConditionException("非法视频! ");
+        }
+        //删除原有视频收藏
+        videoDao.deleteVideoCollections(videoId, userId);
+        //添加新视频收藏
+        videoCollection.setUserId(userId);
+        videoCollection.setCreateTime(new Date());
+        videoDao.addVideoCollections(videoCollection);
+    }
+
+    public void deleteVideoCollections(Long videoId, Long userId) {
+        videoDao.deleteVideoCollections(videoId, userId);
+    }
+
+    public Map<String, Object> getVideoCollections(Long videoId, Long userId) {
+        Long count = videoDao.getVideoCollections(videoId);
+        VideoCollection videoCollection = videoDao.getVideoCollectionsByVideoIdAndUserId(videoId, userId);
+        boolean collection = videoCollection != null;
+        Map<String, Object> result = new HashMap<>();
+        result.put("count", count);
+        result.put("collection", collection);
         return result;
     }
 }
