@@ -53,4 +53,6 @@ public interface UserDao {
                          @Param("createTime") Date date);
 
     RefreshTokenDetail getRefreshTokenDetail(String refreshToken);
+
+    List<UserInfo> batchGetUserInfosByUserIds(Set<Long> userIdList);
 }
