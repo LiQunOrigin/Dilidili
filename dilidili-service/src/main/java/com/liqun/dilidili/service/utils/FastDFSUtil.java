@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +28,10 @@ public class FastDFSUtil {
     private RedisTemplate<String, String> redisTemplate;
 
     private static final String DEFAULT_GROUP = "group1";
+    private static final String PATH_KEY = "path-key:";
+    private static final String UPLOADED_SIZE_KEY = "upload-size-key:";
+    private static final String UPLOADED_NO_KEY = "upload-no-key:";
+    private static final int SLICE_SIZE = 1024 * 1024 * 2;
 
     public String getFileType(MultipartFile file) {
         if (file == null) {
@@ -58,13 +62,20 @@ public class FastDFSUtil {
         appendFileStorageClient.modifyFile(DEFAULT_GROUP, filePath, file.getInputStream(), file.getSize(), offset);
     }
 
-    private static final String PATH_KEY = "path-key:";
-    private static final String UPLOADED_SIZE_KEY = "upload-size-key:";
-    private static final String UPLOADED_NO_KEY = "upload-no-key:";
 
+
+
+    //切片上传
     public String uploadFileBySlices(MultipartFile file, String fileMd5, Integer sliceNo, Integer totalSliceNo) throws IOException {
         /**
-         *
+         * 代码逻辑：
+         *  1. 判断是否是第一块，如果是，则初始化redis中的数据
+         *  2. 判断是否是最后一块，如果是，则删除redis中的数据
+         *  3. 如果不是第一块也不是最后一块，则修改redis中的数据
+         * 代码作用：
+         *  1. 第一块：初始化redis中的数据，并上传文件
+         *  2. 最后一块：删除redis中的数据
+         *  4. 其他情况：修改redis中的数据
          */
         if (file == null || sliceNo == null || totalSliceNo == null) {
             throw new ConditionException("参数异常！");
@@ -109,6 +120,40 @@ public class FastDFSUtil {
             redisTemplate.delete(keyList);
         }
         return resultPath;
+    }
+
+
+
+    public void convertFileToSlices(MultipartFile multipartFile) throws IOException {
+        String fileName = multipartFile.getOriginalFilename();
+        String fileType = this.getFileType(multipartFile);
+        File file = this.multipartFileToFile(multipartFile);
+        long fileSize = file.length();
+        int count = 1;
+        for(long i = 0; i < fileSize; i += SLICE_SIZE) {
+            RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+            randomAccessFile.seek(i);
+            byte[] bytes = new byte[SLICE_SIZE];
+            int len = randomAccessFile.read(bytes);
+            String path = "Users/liqun/tmpfile/" + count + "." + fileType;
+            File sliceFile = new File(path);
+            FileOutputStream fileOutputStream = new FileOutputStream(sliceFile);
+            fileOutputStream.write(bytes, 0, len);
+            fileOutputStream.close();
+            randomAccessFile.close();
+            count++;
+        }
+        file.delete();
+    }
+
+
+    //将multipartFile转为file
+    public File multipartFileToFile(MultipartFile multipartFile) throws IOException {
+        String originalFilename = multipartFile.getOriginalFilename();
+        String[] fileName = originalFilename.split("\\.");
+        File file = File.createTempFile(fileName[0], "." + fileName[1]);
+        multipartFile.transferTo(file);
+        return file;
     }
 
 
