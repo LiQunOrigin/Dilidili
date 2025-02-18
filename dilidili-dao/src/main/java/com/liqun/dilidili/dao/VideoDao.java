@@ -2,8 +2,10 @@ package com.liqun.dilidili.dao;
 
 
 import com.liqun.dilidili.domain.Video;
+import com.liqun.dilidili.domain.VideoLike;
 import com.liqun.dilidili.domain.VideoTag;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -18,4 +20,16 @@ public interface VideoDao {
     Integer pageCountVideos(Map<String, Object> params);
 
     List<Video> pageListVideos(Map<String, Object> params);
+
+    Video getVideoById(Long id);
+
+    VideoLike getVideoLikeByVideoIdAndUserId(@Param("videoId") Long videoId, @Param("userId") Long userId);
+
+    void addVideoLikes(VideoLike videoLike);
+
+    //为什么用Param注解标识? 因为mybatis会自动封装参数，如果直接使用参数名，mybatis会报错
+    //自动封装参数是什么? mybatis会自动封装参数，如果参数是简单类型，mybatis会自动封装为map，如果参数是复杂类型，mybatis会自动封装为bean
+    void deleteVideoLikes(@Param("videoId") Long videoId, @Param("userId") Long userId);
+
+    Long getVideoLikes(Long videoId);
 }

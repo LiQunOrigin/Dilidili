@@ -3,6 +3,7 @@ package com.liqun.dilidili.service;
 import com.liqun.dilidili.dao.VideoDao;
 import com.liqun.dilidili.domain.PageResult;
 import com.liqun.dilidili.domain.Video;
+import com.liqun.dilidili.domain.VideoLike;
 import com.liqun.dilidili.domain.VideoTag;
 import com.liqun.dilidili.domain.exception.ConditionException;
 import com.liqun.dilidili.service.utils.FastDFSUtil;
@@ -66,5 +67,36 @@ public class VideoService {
                                         HttpServletResponse response,
                                         String url) throws Exception {
         fastDFSUtil.viewVideoOnlineBySlices(request, response, url);
+    }
+
+    public void addVideoLikes(Long videoId, Long userId) {
+        Video video = videoDao.getVideoById(videoId);
+        if(video == null) {
+            throw new ConditionException("非法视频! ");
+        }
+        VideoLike videoLike = videoDao.getVideoLikeByVideoIdAndUserId(videoId, userId);
+        if(videoLike != null) {
+            throw new ConditionException("已点赞视频! ");
+        }
+        videoLike = new VideoLike();
+        videoLike.setVideoId(videoId);
+        videoLike.setUserId(userId);
+        videoLike.setCreateTime(new Date());
+        videoDao.addVideoLikes(videoLike);
+    }
+
+    public void deleteVideoLikes(Long videoId, Long userId) {
+        videoDao.deleteVideoLikes(videoId, userId);
+    }
+
+
+    public Map<String, Object> getVideoLikes(Long videoId, Long userId) {
+        Long count = videoDao.getVideoLikes(videoId);
+        VideoLike videoLike = videoDao.getVideoLikeByVideoIdAndUserId(videoId, userId);
+        boolean like = videoLike != null;
+        Map<String, Object> result = new HashMap<>();
+        result.put("count", count);
+        result.put("like", like);
+        return result;
     }
 }
