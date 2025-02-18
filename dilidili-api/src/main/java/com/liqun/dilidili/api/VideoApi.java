@@ -11,13 +11,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @version 1.0
  * @projectName: Dilidili
  * @package: com.liqun.dilidili.api
  * @className: VideoApi
  * @author: LiQun
- * @description: TODO
+ * @description: 视频接口
  * @data 2025/2/18 16:17
  */
 
@@ -42,5 +45,12 @@ public class VideoApi {
     public JsonResponse<PageResult<Video>> getListVideos(Integer size, Integer no, String area){
         PageResult<Video> result = videoService.getListVideos(size, no, area);
         return new JsonResponse<>(result);
+    }
+
+    @GetMapping("/videos-slices")
+    public void viewVideoOnlineBySlices(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        String url) throws Exception {
+        videoService.viewVideoOnlineBySlices(request,response,url);
     }
 }

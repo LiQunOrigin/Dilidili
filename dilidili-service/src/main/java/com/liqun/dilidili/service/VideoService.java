@@ -5,10 +5,13 @@ import com.liqun.dilidili.domain.PageResult;
 import com.liqun.dilidili.domain.Video;
 import com.liqun.dilidili.domain.VideoTag;
 import com.liqun.dilidili.domain.exception.ConditionException;
+import com.liqun.dilidili.service.utils.FastDFSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -25,6 +28,9 @@ public class VideoService {
 
     @Autowired
     private VideoDao videoDao;
+
+    @Autowired
+    private FastDFSUtil fastDFSUtil;
 
     @Transactional
     public void addVideos(Video video) {
@@ -54,5 +60,11 @@ public class VideoService {
             list = videoDao.pageListVideos(params);
         }
         return new PageResult<>(total, list);
+    }
+
+    public void viewVideoOnlineBySlices(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        String url) throws Exception {
+        fastDFSUtil.viewVideoOnlineBySlices(request, response, url);
     }
 }
