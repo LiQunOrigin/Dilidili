@@ -2,9 +2,11 @@ package com.liqun.dilidili.api;
 
 import com.liqun.dilidili.api.support.UserSupport;
 import com.liqun.dilidili.domain.JsonResponse;
+import com.liqun.dilidili.domain.PageResult;
 import com.liqun.dilidili.domain.Video;
 import com.liqun.dilidili.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,5 +36,11 @@ public class VideoApi {
         video.setUserId(userId);
         videoService.addVideos(video);
         return JsonResponse.success();
+    }
+
+    @GetMapping("/videos")
+    public JsonResponse<PageResult<Video>> getListVideos(Integer size, Integer no, String area){
+        PageResult<Video> result = videoService.getListVideos(size, no, area);
+        return new JsonResponse<>(result);
     }
 }

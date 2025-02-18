@@ -3,20 +3,17 @@
 <mapper namespace="com.liqun.dilidili.dao.VideoDao">
 
     <insert id="addVideos" parameterType="com.liqun.dilidili.domain.Video" useGeneratedKeys="true" keyProperty="id">
-        insert into
-            t_video(
-                id,
-                userId,
-                url,
-                thumbnail,
-                title,
-                `type`,
-                duration,
-                area,
-                description,
-                createTime
-            )values(
-                #{id},
+        insert into t_video(id,
+                            userId,
+                            url,
+                            thumbnail,
+                            title,
+                            `type`,
+                            duration,
+                            area,
+                            description,
+                            createTime)
+        values (#{id},
                 #{userId},
                 #{url},
                 #{thumbnail},
@@ -25,25 +22,40 @@
                 #{duration},
                 #{area},
                 #{description},
-                #{createTime}
-            )
+                #{createTime})
     </insert>
 
     <insert id="batchAddVideoTags" parameterType="java.util.List">
         insert into
         t_video_tag(
-            videoId,
-            tagId,
-            createTime
+        videoId,
+        tagId,
+        createTime
         )values
         <foreach collection="videoTagList" item="videoTag" separator=",">
             (
-                #{videoTag.videoId},
-                #{videoTag.tagId},
-                #{videoTag.createTime}
+            #{videoTag.videoId},
+            #{videoTag.tagId},
+            #{videoTag.createTime}
             )
         </foreach>
     </insert>
+    <select id="pageCountVideos" resultType="java.lang.Integer">
+        select count(1) from t_video
+        where 1=1
+        <if test="area != null and area != ''">
+            and area = #{area}
+        </if>
+    </select>
+    <select id="pageListVideos" resultType="com.liqun.dilidili.domain.Video">
+        select * from t_video
+        where 1=1
+        <if test="area != null and area != ''">
+            and area = #{area}
+        </if>
+        oder by id desc
+        limit #{start},#{size}
+    </select>
 
 
 </mapper>
