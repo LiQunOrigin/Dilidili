@@ -1,10 +1,7 @@
 package com.liqun.dilidili.api;
 
 import com.liqun.dilidili.api.support.UserSupport;
-import com.liqun.dilidili.domain.JsonResponse;
-import com.liqun.dilidili.domain.PageResult;
-import com.liqun.dilidili.domain.Video;
-import com.liqun.dilidili.domain.VideoCollection;
+import com.liqun.dilidili.domain.*;
 import com.liqun.dilidili.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -111,6 +108,26 @@ public class VideoApi {
         return new JsonResponse<>(result);
     }
 
+    //视频投币
+    @PostMapping("/videos-coins")
+    public JsonResponse<String> addVideoCoins(@RequestBody VideoCoin videoCoin){
+        Long userId = userSupport.getCurrentUserId();
+        videoService.addVideoCoins(videoCoin,userId);
+        return JsonResponse.success();
+    }
+
+    //获取视频投币数
+    @GetMapping("/videos-coins")
+    public JsonResponse<Map<String,Object>> getVideoCoins(@RequestParam Long videoId){
+        Long userId = null;
+        try {
+            userId = userSupport.getCurrentUserId();
+        }catch (Exception ignored){
+            //未登录
+        }
+        Map<String,Object> result = videoService.getVideoCoins(videoId,userId);
+        return new JsonResponse<>(result);
+    }
 
 
 }

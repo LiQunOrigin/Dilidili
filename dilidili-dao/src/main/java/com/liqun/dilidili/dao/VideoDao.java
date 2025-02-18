@@ -1,10 +1,7 @@
 package com.liqun.dilidili.dao;
 
 
-import com.liqun.dilidili.domain.Video;
-import com.liqun.dilidili.domain.VideoCollection;
-import com.liqun.dilidili.domain.VideoLike;
-import com.liqun.dilidili.domain.VideoTag;
+import com.liqun.dilidili.domain.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -41,4 +38,16 @@ public interface VideoDao {
     void deleteVideoCollections(@Param("videoId") Long videoId, @Param("userId") Long userId);
 
     VideoCollection getVideoCollectionsByVideoIdAndUserId(@Param("videoId") Long videoId, @Param("userId") Long userId);
+
+    VideoCoin getVideoCoinsByVideoIdAndUserId(
+            @Param("videoId") Long videoId,
+            @Param("userId") Long userId
+    );
+
+    void addVideoCoins(VideoCoin videoCoin);
+
+    void updateVideoCoins(VideoCoin videoCoin);
+
+
+    Long getVideoCoinsAmount(@Param("videoId") Long videoId);
 }
