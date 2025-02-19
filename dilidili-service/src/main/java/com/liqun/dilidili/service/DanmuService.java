@@ -29,7 +29,6 @@ public class DanmuService {
     public void addDanmu(Danmu danmu){
         danmuDao.addDanmu(danmu);
     }
-
     @Async
     public void asyncAddDanmu(Danmu danmu){
         danmuDao.addDanmu(danmu);

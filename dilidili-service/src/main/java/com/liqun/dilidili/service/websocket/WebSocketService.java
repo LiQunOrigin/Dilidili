@@ -104,7 +104,7 @@ public class WebSocketService {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("message", message);
                     jsonObject.put("sessionId", webSocketService.getSessionId());
-                    Message msg = new Message(UserMomentsConstant.TOPIC_MOMENTS,jsonObject.toJSONString().getBytes(StandardCharsets.UTF_8));
+                    Message msg = new Message(UserMomentsConstant.TOPIC_MOMENTS, jsonObject.toJSONString().getBytes(StandardCharsets.UTF_8));
                     RocketMQUtil.asyncSendMsg(danmuService, msg);
                 }
                 if (this.userId != null) {
@@ -113,7 +113,7 @@ public class WebSocketService {
                     danmu.setUserId(userId);
                     danmu.setCreateTime(new Date());
                     DanmuService danmuService = (DanmuService) APPLICATION_CONTEXT.getBean("danmuService");
-                    danmuService.addDanmu(danmu);
+                    danmuService.asyncAddDanmu(danmu);//异步保存弹幕
                     //保存弹幕到redis
                     danmuService.addDanmusToRedis(danmu);
                 }
