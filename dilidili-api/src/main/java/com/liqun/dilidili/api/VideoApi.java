@@ -2,6 +2,7 @@ package com.liqun.dilidili.api;
 
 import com.liqun.dilidili.api.support.UserSupport;
 import com.liqun.dilidili.domain.*;
+import com.liqun.dilidili.service.ElasticSearchService;
 import com.liqun.dilidili.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +30,16 @@ public class VideoApi {
     @Autowired
     private UserSupport userSupport;
 
+    @Autowired
+    private ElasticSearchService elasticSearchService;
+
     @PostMapping("/videos")
     public JsonResponse<String> addVideos(@RequestBody Video video) {
         Long userId = userSupport.getCurrentUserId();
         video.setUserId(userId);
         videoService.addVideos(video);
+        //在es中添加视频
+        elasticSearchService.addVideo(video);
         return JsonResponse.success();
     }
 
