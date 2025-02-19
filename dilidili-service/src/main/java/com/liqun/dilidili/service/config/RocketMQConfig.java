@@ -6,6 +6,7 @@ import com.liqun.dilidili.domain.UserFollowing;
 import com.liqun.dilidili.domain.UserMoment;
 import com.liqun.dilidili.domain.constant.UserMomentsConstant;
 import com.liqun.dilidili.service.UserFollowingService;
+import com.liqun.dilidili.service.websocket.WebSocketService;
 import io.netty.util.internal.StringUtil;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
@@ -91,6 +92,47 @@ public class RocketMQConfig {
                     //将新的UserMoment对象添加到订阅列表中
                     redisTemplate.opsForValue().set(key, JSONObject.toJSONString(subscribedList));
                     //将订阅列表存入redis
+                }
+                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+            }
+        });
+        consumer.start();
+        return consumer;
+    }
+
+    @Bean("danmusProducer")
+    public DefaultMQProducer danmusProducer() throws Exception {
+        //创建一个生产者
+        DefaultMQProducer producer = new DefaultMQProducer(UserMomentsConstant.GROUP_MOMENTS);
+        //设置nameserver地址
+        producer.setNamesrvAddr(nameServerAddr);
+        //启动生产者
+        producer.start();
+        return producer;
+    }
+
+
+    @Bean("danmusConsumer")
+    public DefaultMQPushConsumer danmusConsumer() throws Exception {
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(UserMomentsConstant.GROUP_DANMUS);
+        consumer.setNamesrvAddr(nameServerAddr);
+        consumer.subscribe(UserMomentsConstant.TOPIC_DANMUS, "*");
+        consumer.registerMessageListener(new MessageListenerConcurrently() {
+            @Override
+            public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext consumeConcurrentlyContext) {
+                MessageExt msg = msgs.get(0);
+                byte[] msgBytes = msg.getBody();
+                String bodyStr = new String(msgBytes);
+                JSONObject jsonObject = JSONObject.parseObject(bodyStr);
+                String sessionId = jsonObject.getString("sessionId");
+                String message = jsonObject.getString("message");
+                WebSocketService webSocketService = WebSocketService.WEB_SOCKET_MAP.get(sessionId);
+                if (webSocketService.getSession().isOpen()) {
+                    try{
+                        webSocketService.sendMessage(message);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             }
