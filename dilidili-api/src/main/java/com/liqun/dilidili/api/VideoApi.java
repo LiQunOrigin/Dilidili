@@ -155,13 +155,33 @@ public class VideoApi {
 
     //获取视频详情
     @GetMapping("/videos-detail")
-    public JsonResponse<Map<String,Object>> getVideoDetails(@RequestParam Long videoId) {
-        Map<String,Object> result = videoService.getVideoDetails(videoId);
+    public JsonResponse<Map<String, Object>> getVideoDetails(@RequestParam Long videoId) {
+        Map<String, Object> result = videoService.getVideoDetails(videoId);
         return new JsonResponse<>(result);
     }
 
+    //添加视频观看记录
+    @PostMapping("/videos-views")
+    public JsonResponse<String> addVideoViews(@RequestParam VideoView videoView,
+                                              HttpServletRequest request) {
+        Long userId;
+        try {
+            userId = userSupport.getCurrentUserId();
+            videoView.setUserId(userId);
+            videoService.addVideoView(videoView, request);
+        } catch (Exception ignored) {
+            videoService.addVideoView(videoView, request);
+            //未登录也可以添加观看记录
+        }
+        return JsonResponse.success();
+    }
 
-
+    //查询视频播放量
+    @GetMapping("/video-view-counts")
+    public JsonResponse<Integer> getVideoViewCounts(@RequestParam Long videoId) {
+        Integer count = videoService.getVideoViewCounts(videoId);
+        return new JsonResponse<>(count);
+    }
 
 
 }

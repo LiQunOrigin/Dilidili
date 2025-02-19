@@ -82,9 +82,21 @@
                 #{rootId},
                 #{createTime})
     </insert>
+    <insert id="addVideoView">
+        insert into t_video_view(videoId,
+                                 userId,
+                                 clientId,
+                                 ip,
+                                 createTime)
+        values (#{videoId},
+                #{userId},
+                #{clientId},
+                #{ip},
+                #{createTime})
+    </insert>
     <update id="updateVideoCoins" parameterType="com.liqun.dilidili.domain.VideoCoin">
         update t_video_coin
-        set amount = #{amount},
+        set amount     = #{amount},
             updateTime = #{updateTime}
         where videoId = #{videoId}
           and userId = #{userId}
@@ -181,10 +193,33 @@
         order by id desc
     </select>
     <select id="getVideoDetails" resultType="com.liqun.dilidili.domain.Video">
-        select
-            *
+        select *
         from t_video
         where id = #{id}
+    </select>
+    <select id="getVideoView" resultType="com.liqun.dilidili.domain.VideoView">
+        select
+        *
+        from t_video_view
+        where videoId = #{videoId}
+        <if test="userId == null and clientId != null">
+            and userId is null
+            and clientId = #{clientId}
+        </if>
+        <if test="userId != null">
+            and userId = #{userId}
+        </if>
+        <if test="ip != null and ip != ''">
+            and ip = #{ip}
+        </if>
+        <if test="today != null and today != ''">
+            and DATE_FORMAT(createTime,'%Y-%m-%d') = #{today}
+        </if>
+    </select>
+    <select id="getVideoViewCounts" resultType="java.lang.Integer">
+        select count(1)
+        from t_video_view
+        where videoId = #{videoId}
     </select>
 
 
